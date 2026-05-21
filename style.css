@@ -1,0 +1,501 @@
+:root {
+  color-scheme: dark;
+  --bg-space: #060913;
+  --neon-cyan: #00f2fe;
+  --neon-purple: #9b51e0;
+  --streamlit-coral: #ff5f44;
+  --glass-border: rgba(0, 242, 254, 0.15);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  background-color: var(--bg-space);
+  color: #ecf6ff;
+  scroll-behavior: smooth;
+  overflow-x: hidden;
+}
+
+/* خلفية الغبار النجمي وتداخل الإضاءة الـ Ambient */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 15% 15%, rgba(0, 242, 254, 0.08), transparent 35%),
+              radial-gradient(circle at 85% 85%, rgba(155, 81, 224, 0.08), transparent 40%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+#neuralCanvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: all;
+}
+
+.page-shell {
+  position: relative;
+  z-index: 1;
+}
+
+/* التنسيق السينمائي للـ Hero Section */
+.hero-section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.hero-copy {
+  max-width: 950px;
+  padding: 4rem;
+  border-radius: 40px;
+  background: linear-gradient(180deg, rgba(10, 15, 30, 0.85), rgba(6, 9, 19, 0.6));
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(30px);
+  box-shadow: 0 50px 150px rgba(0, 0, 0, 0.6), inset 0 0 40px rgba(0, 242, 254, 0.03);
+  text-align: center;
+}
+
+.hero-name {
+  font-size: clamp(3.5rem, 7vw, 5.5rem);
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  background: linear-gradient(135deg, #fff 30%, #a5f3ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 40px rgba(0, 242, 254, 0.25);
+}
+
+.hero-tagline {
+  margin-top: 1rem;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--neon-purple);
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  font-size: 1.15rem;
+  max-width: 750px;
+  line-height: 1.8;
+  margin: 2rem auto;
+  color: #b0c4de;
+}
+
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.btn {
+  padding: 1.1rem 2.2rem;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+  color: #060913;
+  box-shadow: 0 20px 50px rgba(0, 242, 254, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 30px 60px rgba(0, 242, 254, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(155, 81, 224, 0.4);
+  color: #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: rgba(155, 81, 224, 0.1);
+  transform: translateY(-5px);
+}
+
+/* الأقسام وتأثير الـ Scroll Reveal المتتابع */
+.section {
+  padding: 8rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 5rem;
+}
+
+.section-header .section-label {
+  color: var(--neon-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.section-header h2 {
+  font-size: clamp(2.2rem, 4vw, 3.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* القوقعة الخاصة بالمهارات العائمة */
+.skills-shell {
+  position: relative;
+  width: 100%;
+  height: 650px;
+  background: rgba(10, 14, 27, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 40px;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+  box-shadow: inset 0 0 60px rgba(0, 242, 254, 0.02), 0 30px 80px rgba(0,0,0,0.4);
+}
+
+.skill-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 110px;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.skill-logo-container {
+  width: 90px;
+  height: 90px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.skill-logo-container img {
+  max-width: 60%;
+  max-height: 60%;
+  object-fit: contain;
+}
+
+.skill-label {
+  margin-top: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c9d7ef;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.skill-block:hover .skill-logo-container {
+  transform: scale(1.15);
+  box-shadow: 0 0 40px var(--neon-cyan);
+}
+
+/* شبكة كروت المشروعات وعرض الـ Streamlit */
+.streamlit-grid, .notebook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 2.5rem;
+}
+
+.streamlit-card {
+  background: #0e1117;
+  border: 1px solid #262730;
+  border-radius: 28px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.streamlit-card:hover {
+  transform: translateY(-15px) scale(1.02);
+  border-color: var(--streamlit-coral);
+  box-shadow: 0 30px 70px rgba(255, 95, 68, 0.2);
+}
+
+.sidebar-item {
+  height: 20px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+}
+
+.preview-main {
+  background: #0e1117;
+  border-radius: 14px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.preview-banner {
+  height: 40px;
+  background: rgba(255, 95, 68, 0.08);
+  border-radius: 8px;
+}
+
+.preview-panel {
+  height: 80px;
+  border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255,255,255,0.2);
+  font-size: 0.8rem;
+}
+
+.streamlit-copy h3 {
+  font-size: 1.5rem;
+  margin: 1.5rem 0 0.5rem;
+  color: #fff;
+}
+
+.streamlit-copy p {
+  color: #a2b4c7;
+  line-height: 1.6;
+  font-size: 0.98rem;
+}
+
+.streamlit-link {
+  display: inline-block;
+  margin-top: 1.2rem;
+  color: var(--neon-cyan);
+  text-decoration: none;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.streamlit-card:hover .streamlit-link {
+  transform: translateX(6px);
+  color: var(--streamlit-coral);
+}
+
+/* ستايل محاكاة واجهة Kaggle الاحترافية */
+.notebook-card {
+  background: #171b21;
+  border: 1px solid #30363d;
+  border-radius: 24px;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 480px;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.notebook-card:hover {
+  transform: translateY(-15px) scale(1.02);
+  border-color: var(--neon-cyan);
+  box-shadow: 0 30px 70px rgba(0, 242, 254, 0.15);
+}
+
+.kaggle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #21262d;
+  padding: 0.8rem 1.2rem;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+}
+
+.kaggle-badge {
+  background: #20beff;
+  color: #171b21;
+  font-weight: 800;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+.header-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #c9d1d9;
+}
+
+.cell-meta {
+  color: #58a6ff;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+/* إعدادات محرك الـ Scroll Reveal السينمائي */
+.section-header, .streamlit-card, .notebook-card, .notebook-cell {
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.revealed {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+}
+
+@media(max-width: 768px) {
+  .streamlit-grid, .notebook-grid { grid-template-columns: 1fr; }
+  .skills-shell { height: 500px; }
+}
+/* ==========================================================================
+   PREMIUM HOVER ANIMATIONS (STREAMLIT & KAGGLE SECTIONS)
+   ========================================================================== */
+
+/* --- 1. Streamlit Cards Enhanced Hover --- */
+.streamlit-card {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.4s ease, 
+              box-shadow 0.4s ease, 
+              background 0.4s ease !important;
+}
+
+.streamlit-card:hover {
+  transform: translateY(-10px) scale(1.015) !important;
+  border-color: #ff5f44 !important; /* لون ستريمليت المرجاني */
+  background: rgba(14, 17, 30, 0.98) !important;
+  box-shadow: 0 25px 60px rgba(255, 95, 68, 0.18), 
+              0 0 30px rgba(255, 95, 68, 0.05) !important;
+}
+
+/* تحريك السهم والرابط الداخلي بسلاسة عند الـ Hover */
+.streamlit-card .streamlit-link {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+.streamlit-card:hover .streamlit-link {
+  transform: translateX(8px);
+  color: #ff7a6c;
+  text-shadow: 0 0 10px rgba(255, 122, 108, 0.4);
+}
+
+/* إضاءة وحركة الرسم البياني الوهمي داخل الكرت */
+.streamlit-card .st-chart-mock {
+  transition: all 0.4s ease;
+}
+
+.streamlit-card:hover .st-chart-mock {
+  border-color: rgba(255, 95, 68, 0.4);
+  color: #ff9d88;
+  background: rgba(255, 95, 68, 0.04);
+  box-shadow: inset 0 0 15px rgba(255, 95, 68, 0.08);
+}
+
+
+/* --- 2. Kaggle Notebooks Enhanced Hover --- */
+.notebook-card {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), 
+              border-color 0.4s ease, 
+              box-shadow 0.4s ease, 
+              background 0.4s ease !important;
+}
+
+.notebook-card:hover {
+  transform: translateY(-10px) scale(1.015) !important;
+  border-color: #4febff !important; /* توهج نيون سيان */
+  background: rgba(14, 17, 30, 0.98) !important;
+  box-shadow: 0 25px 60px rgba(79, 235, 255, 0.15), 
+              0 0 30px rgba(126, 99, 255, 0.08) !important;
+}
+
+/* توهج شارة كاجل عند تمرير الماوس */
+.notebook-card .kaggle-badge {
+  transition: all 0.3s ease;
+}
+
+.notebook-card:hover .kaggle-badge {
+  background: #008ABC !important;
+  box-shadow: 0 0 15px rgba(0, 138, 188, 0.6);
+}
+
+/* إضاءة خلية الكود (Code Cell) الداخلية */
+.notebook-card .code-cell {
+  transition: all 0.4s ease;
+}
+
+.notebook-card:hover .code-cell {
+  border-color: rgba(79, 235, 255, 0.25);
+  box-shadow: inset 0 0 20px rgba(79, 235, 255, 0.05);
+  background: rgba(7, 10, 18, 0.95);
+}
+
+/* تحريك سهم رابط النوت بوك */
+.notebook-card .streamlit-link {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+}
+
+.notebook-card:hover .streamlit-link {
+  transform: translateX(8px);
+  color: #4febff;
+  text-shadow: 0 0 10px rgba(79, 235, 255, 0.4);
+}
+/* --- حاوية الصور الجديدة للكروت --- */
+.card-image-container {
+  width: 100%;
+  height: 240px; /* ارتفاع متناسق وموحد لجميع الصور */
+  background: #1a1c24;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+/* ستايل لقطة الشاشة الداخلي */
+.project-screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* لضمان ملء الصورة للحاوية بدون تشويه */
+  object-position: top center; /* التركيز على الجزء العلوي من واجهة التطبيق */
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+  filter: brightness(0.9); /* تقليل السطوع قليلاً ليتماشى مع الثيم الداكن */
+}
+
+/* تأثير الـ Hover الاحترافي على الصورة عند تمرير الماوس فوق الكارت */
+.streamlit-card:hover .project-screenshot {
+  transform: scale(1.06); /* تأثير زووم سينمائي ناعم */
+  filter: brightness(1.15); /* إضاءة اللقطة لتنبيه المستخدم */
+}
+/* --- حاوية الصور الجديدة لسكشن الـ Notebooks --- */
+.notebook-image-container {
+  width: 100%;
+  height: 240px; /* نفس الارتفاع لتوحيد التناسق الهندسي للكروت */
+  background: #0d1117; /* اللون الداكن الافتراضي لبيئة كاجل وجيت هاب */
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  margin: 1.2rem 0; /* مسافة متناسقة بين الهيدر العلوي والنصوص السفلية */
+  position: relative;
+}
+
+/* ستايل لقطة الشاشة للمفكرة */
+.notebook-screenshot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left; /* التركيز على مطلع الأكواد والـ Input Cell من اليسار */
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), filter 0.4s ease;
+  filter: brightness(0.88) contrast(1.05); /* تباين ممتاز للأكواد داخل الثيم المظلم */
+}
+
+/* تأثير حركة الـ Hover السينمائي عند تمرير الماوس فوق كرت الـ Notebook */
+.notebook-card:hover .notebook-screenshot {
+  transform: scale(1.05) translateY(-2px); /* دفع خفيف وزووم ناعم للصورة */
+  filter: brightness(1.15) contrast(1.1); /* إضاءة الأكواد لتسهيل قراءتها الفورية */
+}
